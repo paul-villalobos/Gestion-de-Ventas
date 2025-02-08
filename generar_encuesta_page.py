@@ -1,0 +1,27 @@
+from gpt_consultant import ConsultorDeVentas
+import streamlit as st
+
+def app():
+    consultant = ConsultorDeVentas(session_id=st.session_state['useremail'])
+    st.write("Generar Encuesta")
+
+    # Mostrar historial de mensajes
+    mensajes = consultant.get_session_history().messages
+    for mensaje in mensajes:
+        if mensaje.__class__.__name__ == "HumanMessage":
+            with st.chat_message("user"):
+                st.markdown(mensaje.content)
+        elif mensaje.__class__.__name__ == "AIMessage":
+            with st.chat_message("assistant"):
+                st.markdown(mensaje.content)
+
+    # Reaccionar al user input
+    prompt = st.chat_input("Escribe tu mensaje")
+    if prompt:
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        # Mostrar respuesta
+        with st.chat_message("assistant"):
+            respuesta = consultant.ask_question(prompt)
+            st.write(respuesta)
