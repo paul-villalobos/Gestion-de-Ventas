@@ -9,6 +9,7 @@ from langchain_core.runnables import RunnableWithMessageHistory
 
 from langchain_mongodb.chat_message_histories import MongoDBChatMessageHistory
 
+CNX_STRING = os.getenv("MONGODB-CNX")
 message_s = """
 Eres un Consultor en Gestión Comercial que ayuda a las empresas a conocer a sus clientes a fondo.
 Tu enfoque se centra en la metodología 'Conoce a Tu Cliente a Fondo', 
@@ -44,15 +45,15 @@ su página web para conseguir más recursos en gestión comercial.
 """
 
 class ConsultorDeVentas:
-    def __init__(self, session_id="default_session_id"):
+    def __init__(self, session_id):
         load_dotenv()
-        self.cnx_string = os.getenv("MONGODB-CNX")
         self.session_id = session_id
 
         prompt_template = ChatPromptTemplate.from_messages([
-            SystemMessage(message_s),
+            SystemMessage(content=message_s),
             MessagesPlaceholder(variable_name="history"),
-            HumanMessage(content="{question}")
+            # HumanMessage(content="{question}") NO USARLO. Al usar content no se está reemplazando {question}
+            ("human", "{question}")
         ])
 
         chat = ChatOpenAI(model="gpt-4o-mini")
@@ -73,7 +74,7 @@ class ConsultorDeVentas:
 
         message_history = MongoDBChatMessageHistory(
             session_id=self.session_id,
-            connection_string=self.cnx_string,
+            connection_string=CNX_STRING,
             database_name="gestion_comercial",
             collection_name="chat_history",
         )
