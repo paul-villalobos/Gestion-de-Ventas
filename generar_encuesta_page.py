@@ -2,8 +2,10 @@ from gpt_consultant import ConsultorDeVentas
 import streamlit as st
 
 def app():
-    consultant = ConsultorDeVentas(session_id=st.session_state['useremail'])
-    st.write("Generar Encuesta")
+    consultant = ConsultorDeVentas(session_id=st.session_state['useremail'], username=st.session_state['username'])
+    st.title("IA Especializada en Crear Encuestas")
+    st.write('Objetivo: Ayudar a tu empresa a entender qué valoran tus clientes, incluyendo sus necesidades, miedos y expectativas.')
+    st.write('Cómo funciona: Genera preguntas estratégicas adaptadas al sector y objetivos de tu empresa.')
 
     # Mostrar historial de mensajes
     mensajes = consultant.get_session_history().messages
@@ -22,6 +24,7 @@ def app():
             st.markdown(prompt)
 
         # Mostrar respuesta
+        # TODO: Stream response https://www.youtube.com/watch?v=zKGeRWjJlTU
         with st.chat_message("assistant"):
             respuesta = consultant.ask_question(prompt)
             st.write(respuesta)
