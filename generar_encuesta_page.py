@@ -1,31 +1,35 @@
-from gpt_consultant import ConsultorDeVentas
 import streamlit as st
+from gpt_consultant import ConsultorDeVentas
 
-def app():
-    consultant = ConsultorDeVentas(session_id=st.session_state['useremail'], username=st.session_state['username'])
-    st.title("IA Especializada en Crear Encuestas")
-    st.write('Objetivo: Ayudar a tu empresa a entender qué valoran tus clientes, incluyendo sus necesidades, miedos y expectativas.')
-    st.write('Cómo funciona: Genera preguntas estratégicas adaptadas al sector y objetivos de tu empresa.')
 
-    # Mostrar historial de mensajes
+def mostrar_historial(consultant):
+    """Muestra el historial de mensajes en el chat."""
     mensajes = consultant.get_session_history().messages
     for mensaje in mensajes:
-        if mensaje.__class__.__name__ == "HumanMessage":
-            with st.chat_message("user"):
-                st.markdown(mensaje.content)
-        elif mensaje.__class__.__name__ == "AIMessage":
-            with st.chat_message("assistant"):
-                st.markdown(mensaje.content)
+        with st.chat_message("user" if mensaje.__class__.__name__ == "HumanMessage" else "assistant"):
+            st.markdown(mensaje.content)
 
-    # Reaccionar al user input
+
+def procesar_interaccion(consultant):
+    """Maneja la interacción con el usuario y la IA."""
     prompt = st.chat_input("Escribe tu mensaje")
     if prompt:
         with st.chat_message("user"):
             st.markdown(prompt)
 
-        # Mostrar respuesta
-        # TODO: Stream response https://www.youtube.com/watch?v=zKGeRWjJlTU
         with st.chat_message("assistant"):
-            # respuesta = consultant.ask_question(prompt)
-            # st.write(respuesta)
             st.write_stream(consultant.stream_answer(prompt))
+
+
+def app():
+    """Página de generación de encuestas."""
+    st.title("IA Especializada en Crear Encuestas")
+    st.write(
+        'Objetivo: Ayudar a tu empresa a entender qué valoran tus clientes, incluyendo sus necesidades, miedos y expectativas.')
+    st.write('Cómo funciona: Genera preguntas estratégicas adaptadas al sector y objetivos de tu empresa.')
+
+    consultant = ConsultorDeVentas(session_id=st.session_state.get('useremail', 'default_session'),
+                                   username=st.session_state.get('username', 'Usuario Anónimo'))
+
+    mostrar_historial(consultant)
+    procesar_interaccion(consultant)
