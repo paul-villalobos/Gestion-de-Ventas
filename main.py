@@ -10,7 +10,7 @@ st.set_page_config(
 # Inicializar el estado de sesión para el usuario si no existe
 st.session_state.setdefault('useremail', None)
 is_logged_in = bool(st.session_state['useremail'])
-print("Is Logged In:", is_logged_in)
+# print("Is Logged In:", is_logged_in)
 
 class MultiApp:
     def __init__(self):

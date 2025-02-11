@@ -70,9 +70,13 @@ class ConsultorDeVentas:
             history_messages_key="history",
         )
 
-    def ask_question(self, question):
+    def invoke_answer(self, question):
         config = { "configurable": {"session_id": self.session_id}}
         return self.chain_with_history.invoke({"question": question}, config = config)
+
+    def stream_answer(self, question):
+        config = { "configurable": {"session_id": self.session_id}}
+        return self.chain_with_history.stream({"question": question}, config = config)
 
     def get_session_history(self):
 

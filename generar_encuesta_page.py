@@ -26,5 +26,6 @@ def app():
         # Mostrar respuesta
         # TODO: Stream response https://www.youtube.com/watch?v=zKGeRWjJlTU
         with st.chat_message("assistant"):
-            respuesta = consultant.ask_question(prompt)
-            st.write(respuesta)
+            # respuesta = consultant.ask_question(prompt)
+            # st.write(respuesta)
+            st.write_stream(consultant.stream_answer(prompt))
